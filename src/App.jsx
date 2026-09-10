@@ -4,6 +4,8 @@ import About from "./pages/About"
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import ProtectedRoute from "./routes/ProtectedRoute"
+import DashboardLayout from "./components/DashboardLayout"
+import GuestRoute from "./routes/GuestRoute"
 
 function App() {
   return (
@@ -11,16 +13,24 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
-
         <Route
-          path="/dashboard"
+          path="/login"
           element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
           }
         />
+
+        <Route
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
