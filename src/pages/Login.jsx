@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { useAuth } from "../context/AuthContext"
 
@@ -7,6 +8,7 @@ export default function Login() {
     const [password, setPassword] = useState("")
 
     const { login } = useAuth()
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -15,6 +17,7 @@ export default function Login() {
             const data = await login(email, password)
 
             toast.success(`Welcome back, ${data.user.name}!`)
+            navigate("/dashboard")
             console.log("Login successful:", data)
         } catch (error) {
             console.error("Login failed:", error)
