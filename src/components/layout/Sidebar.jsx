@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext"
 import { toast } from "sonner"
 
 export default function Sidebar() {
-    const { logout } = useAuth()
+    const { user, logout } = useAuth()
     const navigate = useNavigate()
 
     const handleLogout = async () => {
@@ -32,13 +32,35 @@ export default function Sidebar() {
                 </p>
             </div>
 
-            <nav className="flex-1 p-4">
+            <nav className="flex-1 space-y-1 p-4">
                 <Link
                     to="/dashboard"
-                    className="block rounded-lg bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-600"
+                    className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
                 >
                     Dashboard
                 </Link>
+
+                <Link
+                    to="/subjects"
+                    className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+                >
+                    Subjects
+                </Link>
+
+                {user?.role === "admin" && (
+                    <>
+                        <div className="px-4 pb-2 pt-6 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                            Administration
+                        </div>
+
+                        <Link
+                            to="/admin/subjects"
+                            className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+                        >
+                            Manage Subjects
+                        </Link>
+                    </>
+                )}
             </nav>
 
             <div className="border-t border-gray-100 p-4">
