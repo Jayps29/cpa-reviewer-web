@@ -12,6 +12,9 @@ import SubjectDetails from "./pages/SubjectDetails"
 import AdminSubjects from "./pages/admin/subjects/Subjects"
 import NewSubject from "./pages/admin/subjects/NewSubject"
 import EditSubject from "./pages/admin/subjects/EditSubject"
+import AdminTopics from "./pages/admin/subjects/topics/Topics"
+import NewTopic from "./pages/admin/subjects/topics/NewTopic"
+import EditTopic from "./pages/admin/subjects/topics/EditTopic"
 
 function App() {
   return (
@@ -73,6 +76,33 @@ function App() {
             element={
               <AdminRoute>
                 <NewSubject />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/subjects/:subjectId/topics"
+            element={
+              <AdminRoute>
+                <AdminTopics />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/subjects/:subjectId/topics/new"
+            element={
+              <AdminRoute>
+                <NewTopic />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/subjects/:subjectId/topics/:topicId/edit"
+            element={
+              <AdminRoute>
+                <EditTopic />
               </AdminRoute>
             }
           />

@@ -1,44 +1,49 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
-import {
-    getSubjects,
-    deleteSubject,
-} from "../../../api/subjects"
-import DeleteSubjectModal from "../../../components/subjects/DeleteSubjectModal"
 
-export default function Subjects() {
+import {
+    getTopics,
+    deleteTopic,
+} from "../../../../api/topics"
+
+import DeleteTopicModal from "../../../../components/admin/DeleteTopicModal"
+
+export default function Topics() {
+    const { subjectId } = useParams()
     const navigate = useNavigate()
-    const [subjects, setSubjects] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState("")
-    const [selectedSubject, setSelectedSubject] = useState(null)
+
+    const [selectedTopic, setSelectedTopic] = useState(null)
     const [deleting, setDeleting] = useState(false)
 
+    const [topics, setTopics] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
 
     useEffect(() => {
-        const fetchSubjects = async () => {
+        const fetchTopics = async () => {
             try {
-                const data = await getSubjects()
-                setSubjects(data)
+                const data = await getTopics(subjectId)
+                setTopics(data)
             } catch (error) {
-                console.error("Failed to fetch subjects:", error)
-                setError("Failed to load subjects.")
+                console.error("Failed to fetch topics:", error)
+                setError("Failed to load topics.")
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchSubjects()
-    }, [])
+        fetchTopics()
+    }, [subjectId])
 
     if (loading) {
         return (
             <div className="flex min-h-[400px] items-center justify-center">
                 <div className="text-center">
                     <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-indigo-600" />
+
                     <p className="mt-3 text-sm text-gray-500">
-                        Loading subjects...
+                        Loading topics...
                     </p>
                 </div>
             </div>
@@ -60,34 +65,28 @@ export default function Subjects() {
     }
 
     const handleDelete = async () => {
-        if (!selectedSubject) {
-            return
-        }
+        if (!selectedTopic) return
 
         try {
             setDeleting(true)
 
-            await deleteSubject(selectedSubject.id)
+            await deleteTopic(selectedTopic.id)
 
-            setSubjects((currentSubjects) =>
-                currentSubjects.filter(
-                    (subject) => subject.id !== selectedSubject.id
+            setTopics((currentTopics) =>
+                currentTopics.filter(
+                    (topic) => topic.id !== selectedTopic.id
                 )
             )
 
-            toast.success("Subject deleted successfully")
+            toast.success("Topic deleted successfully")
 
-            setSelectedSubject(null)
+            setSelectedTopic(null)
         } catch (error) {
-            console.error("Failed to delete subject:", error)
+            const message =
+                error.response?.data?.error ||
+                "Failed to delete topic"
 
-            const errors = error.response?.data?.errors
-
-            if (errors?.length) {
-                toast.error(errors.join(", "))
-            } else {
-                toast.error("Failed to delete subject")
-            }
+            toast.error(message)
         } finally {
             setDeleting(false)
         }
@@ -98,128 +97,129 @@ export default function Subjects() {
             {/* Page Header */}
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">
-                        Subjects
+                    <button
+                        type="button"
+                        onClick={() => navigate("/admin/subjects")}
+                        className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                    >
+                        ← Back to Subjects
+                    </button>
+
+                    <h1 className="mt-4 text-3xl font-bold text-gray-900">
+                        Manage Topics
                     </h1>
 
                     <p className="mt-2 text-gray-500">
-                        Manage the CPA subjects available to students.
+                        Manage the topics for this CPA subject.
                     </p>
                 </div>
 
                 <button
                     type="button"
-                    onClick={() => navigate("/admin/subjects/new")}
-                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={() =>
+                        navigate(
+                            `/admin/subjects/${subjectId}/topics/new`
+                        )
+                    }
+                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
                 >
                     <span className="text-lg leading-none">+</span>
-                    Add Subject
+                    Add Topic
                 </button>
             </div>
 
             {/* Stats */}
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8">
                 <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                     <p className="text-sm font-medium text-gray-500">
-                        Total Subjects
+                        Total Topics
                     </p>
 
                     <p className="mt-2 text-3xl font-bold text-gray-900">
-                        {subjects.length}
-                    </p>
-                </div>
-
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <p className="text-sm font-medium text-gray-500">
-                        Available
-                    </p>
-
-                    <p className="mt-2 text-3xl font-bold text-green-600">
-                        {subjects.length}
+                        {topics.length}
                     </p>
                 </div>
             </div>
 
-            {/* Subjects */}
+            {/* Topics */}
             <div className="mt-8">
-                <div className="mb-4 flex items-center justify-between">
-                    <div>
-                        <h2 className="text-lg font-semibold text-gray-900">
-                            All Subjects
-                        </h2>
+                <div className="mb-4">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                        All Topics
+                    </h2>
 
-                        <p className="text-sm text-gray-500">
-                            Manage your CPA review subjects.
-                        </p>
-                    </div>
+                    <p className="text-sm text-gray-500">
+                        Manage the topics available under this subject.
+                    </p>
                 </div>
 
-                {subjects.length === 0 ? (
+                {topics.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-xl">
-                            📚
+                            📖
                         </div>
 
                         <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                            No subjects yet
+                            No topics yet
                         </h3>
 
                         <p className="mt-1 text-sm text-gray-500">
-                            Create your first CPA subject to get started.
+                            Add the first topic for this subject.
                         </p>
 
                         <button
                             type="button"
-                            onClick={() => navigate("/admin/subjects/new")}
+                            onClick={() =>
+                                navigate(
+                                    `/admin/subjects/${subjectId}/topics/new`
+                                )
+                            }
                             className="mt-5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
                         >
-                            Add Subject
+                            Add Topic
                         </button>
                     </div>
                 ) : (
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                         <div className="divide-y divide-gray-100">
-                            {subjects.map((subject) => (
+                            {topics.map((topic) => (
                                 <div
-                                    key={subject.id}
-                                    className="group flex items-center justify-between p-6 transition hover:bg-gray-50"
+                                    key={topic.id}
+                                    className="flex items-center justify-between p-6 transition hover:bg-gray-50"
                                 >
-                                    {/* Subject Information */}
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            navigate(`/admin/subjects/${subject.id}/topics`)
-                                        }
-                                        className="flex min-w-0 items-center gap-4 text-left"
-                                    >
+                                    <div className="flex min-w-0 items-center gap-4">
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-lg font-bold text-indigo-600">
-                                            {subject.name
+                                            {topic.name
                                                 ?.charAt(0)
                                                 .toUpperCase()}
                                         </div>
 
                                         <div className="min-w-0">
                                             <h3 className="font-semibold text-gray-900">
-                                                {subject.name}
+                                                {topic.name}
                                             </h3>
 
                                             <p className="mt-1 max-w-xl truncate text-sm text-gray-500">
-                                                {subject.description ||
+                                                {topic.description ||
                                                     "No description provided."}
                                             </p>
 
                                             <p className="mt-2 text-xs text-gray-400">
-                                                Subject ID: {subject.id}
+                                                Topic ID: {topic.id}
                                             </p>
                                         </div>
-                                    </button>
+                                    </div>
 
-                                    {/* Actions */}
-                                    < div className="ml-6 flex shrink-0 items-center gap-2" >
+                                    <div className="ml-6 flex shrink-0 items-center gap-2">
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                navigate(`/admin/subjects/${subject.id}/edit`)
+                                                navigate(
+                                                    `/admin/subjects/${subjectId}/topics/${topic.id}/edit`,
+                                                    {
+                                                        state: { topic },
+                                                    }
+                                                )
                                             }
                                             className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
                                         >
@@ -228,8 +228,8 @@ export default function Subjects() {
 
                                         <button
                                             type="button"
-                                            onClick={() => setSelectedSubject(subject)}
-                                            className="rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                                            onClick={() => setSelectedTopic(topic)}
+                                            className="rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                                         >
                                             Delete
                                         </button>
@@ -238,18 +238,16 @@ export default function Subjects() {
                             ))}
                         </div>
                     </div>
-                )
-                }
-            </div >
+                )}
+            </div>
 
-            <DeleteSubjectModal
-                subject={selectedSubject}
+            <DeleteTopicModal
+                topic={selectedTopic}
                 deleting={deleting}
                 onConfirm={handleDelete}
-                onCancel={() => setSelectedSubject(null)}
+                onCancel={() => setSelectedTopic(null)}
             />
-        </div >
 
-
+        </div>
     )
 }
