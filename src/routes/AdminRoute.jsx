@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 
 export default function AdminRoute({ children }) {
@@ -20,5 +20,5 @@ export default function AdminRoute({ children }) {
         return <Navigate to="/dashboard" replace />
     }
 
-    return children
+    return children ?? <Outlet />
 }
