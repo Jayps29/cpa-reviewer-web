@@ -1,35 +1,42 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { getLessons } from "../../../../../api/lessons"
 import { toast } from "sonner"
-import { deleteLesson } from "../../../../../api/lessons"
-import DeleteLessonModal from "../../../../../components/admin/DeleteLessonModal"
 
-export default function Lessons() {
-    const { subjectId, topicId } = useParams()
+import {
+    getActivities,
+    deleteActivity,
+} from "../../../../../../api/activities"
+
+import DeleteActivityModal from "../../../../../../components/admin/DeleteActivityModal"
+
+export default function Activities() {
+    const { subjectId, topicId, lessonId } = useParams()
     const navigate = useNavigate()
 
-    const [selectedLesson, setSelectedLesson] = useState(null)
-    const [deleting, setDeleting] = useState(false)
-    const [lessons, setLessons] = useState([])
+    const [activities, setActivities] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
+    const [selectedActivity, setSelectedActivity] = useState(null)
+    const [deleting, setDeleting] = useState(false)
 
     useEffect(() => {
-        const fetchLessons = async () => {
+        const fetchActivities = async () => {
             try {
-                const data = await getLessons(topicId)
-                setLessons(data)
+                const data = await getActivities(lessonId)
+                setActivities(data)
             } catch (error) {
-                console.error("Failed to fetch lessons:", error)
-                setError("Failed to load lessons.")
+                console.error(
+                    "Failed to fetch activities:",
+                    error
+                )
+                setError("Failed to load activities.")
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchLessons()
-    }, [topicId])
+        fetchActivities()
+    }, [lessonId])
 
     if (loading) {
         return (
@@ -38,7 +45,7 @@ export default function Lessons() {
                     <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-indigo-600" />
 
                     <p className="mt-3 text-sm text-gray-500">
-                        Loading lessons...
+                        Loading activities...
                     </p>
                 </div>
             </div>
@@ -60,25 +67,26 @@ export default function Lessons() {
     }
 
     const handleDelete = async () => {
-        if (!selectedLesson) return
+        if (!selectedActivity) return
 
         try {
             setDeleting(true)
 
-            await deleteLesson(selectedLesson.id)
+            await deleteActivity(selectedActivity.id)
 
-            setLessons((currentLessons) =>
-                currentLessons.filter(
-                    (lesson) => lesson.id !== selectedLesson.id
+            setActivities((currentActivities) =>
+                currentActivities.filter(
+                    (activity) =>
+                        activity.id !== selectedActivity.id
                 )
             )
 
-            toast.success("Lesson deleted successfully")
-            setSelectedLesson(null)
+            toast.success("Activity deleted successfully")
+            setSelectedActivity(null)
         } catch (error) {
             const message =
                 error.response?.data?.error ||
-                "Failed to delete lesson"
+                "Failed to delete activity"
 
             toast.error(message)
         } finally {
@@ -94,19 +102,21 @@ export default function Lessons() {
                     <button
                         type="button"
                         onClick={() =>
-                            navigate(`/admin/subjects/${subjectId}/topics`)
+                            navigate(
+                                `/admin/subjects/${subjectId}/topics/${topicId}/lessons`
+                            )
                         }
                         className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
                     >
-                        ← Back to Topics
+                        ← Back to Lessons
                     </button>
 
                     <h1 className="mt-4 text-3xl font-bold text-gray-900">
-                        Manage Lessons
+                        Manage Activities
                     </h1>
 
                     <p className="mt-2 text-gray-500">
-                        Manage the lessons for this CPA topic.
+                        Manage the activities for this CPA lesson.
                     </p>
                 </div>
 
@@ -114,13 +124,13 @@ export default function Lessons() {
                     type="button"
                     onClick={() =>
                         navigate(
-                            `/admin/subjects/${subjectId}/topics/${topicId}/lessons/new`
+                            `/admin/subjects/${subjectId}/topics/${topicId}/lessons/${lessonId}/activities/new`
                         )
                     }
                     className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
                 >
                     <span className="text-lg leading-none">+</span>
-                    Add Lesson
+                    Add Activity
                 </button>
             </div>
 
@@ -128,78 +138,85 @@ export default function Lessons() {
             <div className="mt-8">
                 <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                     <p className="text-sm font-medium text-gray-500">
-                        Total Lessons
+                        Total Activities
                     </p>
 
                     <p className="mt-2 text-3xl font-bold text-gray-900">
-                        {lessons.length}
+                        {activities.length}
                     </p>
                 </div>
             </div>
 
-            {/* Lessons */}
+            {/* Activities */}
             <div className="mt-8">
                 <div className="mb-4">
                     <h2 className="text-lg font-semibold text-gray-900">
-                        All Lessons
+                        All Activities
                     </h2>
 
                     <p className="text-sm text-gray-500">
-                        Manage the lessons available under this topic.
+                        Manage the activities included in this lesson.
                     </p>
                 </div>
 
-                {lessons.length === 0 ? (
+                {activities.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-xl">
-                            📚
+                            🎯
                         </div>
 
                         <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                            No lessons yet
+                            No activities yet
                         </h3>
 
                         <p className="mt-1 text-sm text-gray-500">
-                            Add the first lesson for this topic.
+                            Add the first activity for this lesson.
                         </p>
 
                         <button
                             type="button"
                             onClick={() =>
                                 navigate(
-                                    `/admin/subjects/${subjectId}/topics/${topicId}/lessons/new`
+                                    `/admin/subjects/${subjectId}/topics/${topicId}/lessons/${lessonId}/activities/new`
                                 )
                             }
                             className="mt-5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
                         >
-                            Add Lesson
+                            Add Activity
                         </button>
                     </div>
                 ) : (
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                         <div className="divide-y divide-gray-100">
-                            {lessons.map((lesson) => (
+                            {activities.map((activity) => (
                                 <div
-                                    key={lesson.id}
+                                    key={activity.id}
                                     className="flex items-center justify-between p-6 transition hover:bg-gray-50"
                                 >
                                     <div className="flex min-w-0 items-center gap-4">
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600">
-                                            {lesson.position}
+                                            {activity.position}
                                         </div>
 
                                         <div className="min-w-0">
-                                            <h3 className="font-semibold text-gray-900">
-                                                {lesson.title}
-                                            </h3>
+                                            <div className="flex items-center gap-3">
+                                                <h3 className="font-semibold text-gray-900">
+                                                    {activity.title ||
+                                                        "Untitled Activity"}
+                                                </h3>
+
+                                                <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                                                    {activity.activity_type}
+                                                </span>
+                                            </div>
 
                                             <p className="mt-1 max-w-xl truncate text-sm text-gray-500">
-                                                {lesson.description ||
-                                                    "No description provided."}
+                                                {activity.prompt ||
+                                                    "No prompt provided."}
                                             </p>
 
                                             <p className="mt-2 text-xs text-gray-400">
-                                                Lesson ID: {lesson.id}
+                                                Activity ID: {activity.id}
                                             </p>
                                         </div>
                                     </div>
@@ -209,21 +226,9 @@ export default function Lessons() {
                                             type="button"
                                             onClick={() =>
                                                 navigate(
-                                                    `/admin/subjects/${subjectId}/topics/${topicId}/lessons/${lesson.id}/activities`
-                                                )
-                                            }
-                                            className="rounded-lg border border-indigo-200 px-3 py-2 text-sm font-medium text-indigo-600 transition hover:bg-indigo-50"
-                                        >
-                                            Activities
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                navigate(
-                                                    `/admin/subjects/${subjectId}/topics/${topicId}/lessons/${lesson.id}/edit`,
+                                                    `/admin/subjects/${subjectId}/topics/${topicId}/lessons/${lessonId}/activities/${activity.id}/edit`,
                                                     {
-                                                        state: { lesson },
+                                                        state: { activity },
                                                     }
                                                 )
                                             }
@@ -234,7 +239,7 @@ export default function Lessons() {
 
                                         <button
                                             type="button"
-                                            onClick={() => setSelectedLesson(lesson)}
+                                            onClick={() => setSelectedActivity(activity)}
                                             className="rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                                         >
                                             Delete
@@ -247,11 +252,11 @@ export default function Lessons() {
                 )}
             </div>
 
-            <DeleteLessonModal
-                lesson={selectedLesson}
+            <DeleteActivityModal
+                activity={selectedActivity}
                 deleting={deleting}
                 onConfirm={handleDelete}
-                onCancel={() => setSelectedLesson(null)}
+                onCancel={() => setSelectedActivity(null)}
             />
 
         </div>
