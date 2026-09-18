@@ -18,6 +18,10 @@ import EditTopic from "./pages/admin/subjects/topics/EditTopic"
 import Lessons from "./pages/admin/subjects/topics/lessons/Lessons"
 import NewLesson from "./pages/admin/subjects/topics/lessons/NewLesson"
 import EditLesson from "./pages/admin/subjects/topics/lessons/EditLesson"
+import Activities from "./pages/admin/subjects/topics/lessons/activities/Activities"
+import NewActivity from "./pages/admin/subjects/topics/lessons/activities/NewActivity"
+import EditActivity from "./pages/admin/subjects/topics/lessons/activities/EditActivity"
+
 
 function App() {
   return (
@@ -133,6 +137,33 @@ function App() {
             element={
               <AdminRoute>
                 <EditLesson />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/subjects/:subjectId/topics/:topicId/lessons/:lessonId/activities"
+            element={
+              <AdminRoute>
+                <Activities />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/subjects/:subjectId/topics/:topicId/lessons/:lessonId/activities/new"
+            element={
+              <AdminRoute>
+                <NewActivity />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/subjects/:subjectId/topics/:topicId/lessons/:lessonId/activities/:activityId/edit"
+            element={
+              <AdminRoute>
+                <EditActivity />
               </AdminRoute>
             }
           />
