@@ -47,6 +47,14 @@ export default function Sidebar() {
                     Subjects
                 </Link>
 
+                <Link to="/lessons/1/learn"
+                    className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+                >
+                    Learn
+                </Link>
+
+
+
                 {user?.role === "admin" && (
                     <>
                         <div className="px-4 pb-2 pt-6 text-xs font-semibold uppercase tracking-wider text-gray-400">
