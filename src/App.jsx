@@ -30,6 +30,8 @@ import Activities from "./pages/admin/subjects/topics/lessons/activities/Activit
 import NewActivity from "./pages/admin/subjects/topics/lessons/activities/NewActivity"
 import EditActivity from "./pages/admin/subjects/topics/lessons/activities/EditActivity"
 
+import LessonPlayer from "./pages/LessonPlayer"
+
 function App() {
   return (
     <BrowserRouter>
@@ -61,6 +63,11 @@ function App() {
           <Route
             path="/subjects/:subjectId"
             element={<SubjectDetails />}
+          />
+
+          <Route
+            path="/lessons/:lessonId/learn"
+            element={<LessonPlayer />}
           />
 
           {/* Admin */}

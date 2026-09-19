@@ -8,6 +8,25 @@ export const getLessons = async (topicId) => {
     return response.data.lessons
 }
 
+export const getLessonForLearning = async (lessonId) => {
+    const response = await api.get(
+        `/api/v1/lessons/${lessonId}/learn`
+    )
+
+    return response.data.lesson
+}
+
+export const submitActivityAnswer = async (activityId, answer) => {
+    const response = await api.post(
+        `/api/v1/activities/${activityId}/answer`,
+        {
+            answer,
+        }
+    )
+
+    return response.data
+}
+
 export const createLesson = async (
     topicId,
     title,
