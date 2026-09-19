@@ -12,6 +12,8 @@ export default function NewLesson() {
     const [description, setDescription] = useState("")
     const [position, setPosition] = useState("")
     const [saving, setSaving] = useState(false)
+    const [content, setContent] = useState("")
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -35,6 +37,7 @@ export default function NewLesson() {
                 topicId,
                 title.trim(),
                 description.trim(),
+                content.trim(),
                 Number(position)
             )
 
@@ -121,6 +124,20 @@ export default function NewLesson() {
 
                 <div className="mt-6">
                     <label className="block text-sm font-medium text-gray-700">
+                        Study Material
+                    </label>
+
+                    <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        rows={10}
+                        placeholder="Enter the lesson study material..."
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
+                    />
+                </div>
+
+                <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700">
                         Position
                     </label>
 
@@ -134,8 +151,8 @@ export default function NewLesson() {
                         }}
                         placeholder="1"
                         className={`mt-2 w-full rounded-lg border px-4 py-3 outline-none transition focus:ring-2 ${positionError
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-100"
-                                : "border-gray-300 focus:border-gray-500 focus:ring-gray-200"
+                            ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                            : "border-gray-300 focus:border-gray-500 focus:ring-gray-200"
                             }`}
                     />
 
