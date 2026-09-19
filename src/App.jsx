@@ -31,6 +31,9 @@ import NewActivity from "./pages/admin/subjects/topics/lessons/activities/NewAct
 import EditActivity from "./pages/admin/subjects/topics/lessons/activities/EditActivity"
 
 import LessonPlayer from "./pages/LessonPlayer"
+import TopicDetails from "./pages/TopicDetails"
+import LessonStudy from "./pages/LessonStudy"
+
 
 function App() {
   return (
@@ -66,9 +69,26 @@ function App() {
           />
 
           <Route
+            path="/subjects/:subjectId/topics/:topicId"
+            element={<TopicDetails />}
+          />
+
+          <Route
+            path="/lessons/:lessonId"
+            element={<LessonStudy />}
+          />
+
+          <Route
             path="/lessons/:lessonId/learn"
             element={<LessonPlayer />}
           />
+
+          <Route
+            path="/lessons/:lessonId/learn"
+            element={<LessonPlayer />}
+          />
+
+
 
           {/* Admin */}
           <Route element={<AdminRoute />}>
