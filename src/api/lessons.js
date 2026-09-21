@@ -8,6 +8,14 @@ export const getLessons = async (topicId) => {
     return response.data.lessons
 }
 
+export const getLessonProgress = async (lessonId) => {
+    const response = await api.get(
+        `/api/v1/lessons/${lessonId}/progress`
+    )
+
+    return response.data.progress
+}
+
 export const getLessonForLearning = async (lessonId) => {
     const response = await api.get(
         `/api/v1/lessons/${lessonId}/learn`
