@@ -129,26 +129,22 @@ export default function TopicDetails() {
                         const lessonProgress =
                             progress[lesson.id]
 
-                        const percentage =
-                            lessonProgress?.percentage ?? 0
-
-                        const completed =
-                            lessonProgress?.completed_activities ?? 0
-
-                        const total =
-                            lessonProgress?.total_activities ?? 0
-
                         const correct =
                             lessonProgress?.score?.correct ?? 0
 
                         const scoreTotal =
-                            lessonProgress?.score?.total ?? total
+                            lessonProgress?.score?.total ?? 0
+
+                        const percentage =
+                            scoreTotal > 0
+                                ? Math.round((correct / scoreTotal) * 100)
+                                : 0
 
                         const isCompleted =
                             lessonProgress?.completed === true
 
                         const hasStarted =
-                            completed > 0
+                            scoreTotal > 0
 
                         let buttonText = "Start Lesson"
 
@@ -198,16 +194,6 @@ export default function TopicDetails() {
                                     </div>
                                 </div>
 
-                                {/* Activities completed */}
-                                <div className="mt-4 flex items-center justify-between text-sm">
-                                    <span className="text-gray-500">
-                                        Activities completed
-                                    </span>
-
-                                    <span className="font-medium text-gray-700">
-                                        {completed} / {total}
-                                    </span>
-                                </div>
 
                                 {/* Score */}
                                 {scoreTotal > 0 && (
